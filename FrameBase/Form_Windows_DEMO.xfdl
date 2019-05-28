@@ -1,13 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <FDL version="2.0">
-  <Form id="Form_Windows_DEMO" width="600" height="400" titletext="Launcher TEST">
+  <Form id="Form_Windows_DEMO" width="600" height="400" titletext="Launcher TEST" onload="Form_Windows_DEMO_onload">
     <Layouts>
       <Layout height="400" mobileorientation="landscape" width="600">
         <Static id="Static00" taborder="0" text="nexacro 17 Launcher TEST" left="50" top="50" height="104" font="normal 30pt/normal &quot;Arial&quot;" right="50"/>
+        <Static id="Static01" taborder="1" left="50" top="170" height="104" font="normal 30pt/normal &quot;Arial&quot;" right="50"/>
       </Layout>
     </Layouts>
     <Script type="xscript5.1"><![CDATA[
 
+
+this.Form_Windows_DEMO_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
+{
+	this.Static01.set_text(nexacro.getApplication().gvTest);
+};
 ]]></Script>
   </Form>
 </FDL>

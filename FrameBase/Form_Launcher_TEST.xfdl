@@ -18,6 +18,7 @@
         <GroupBox id="GroupBox03" taborder="12" text="실행 결과" left="26" top="240" width="784" height="320"/>
         <TextArea id="TextArea00" taborder="13" left="40" top="260" width="760" height="280" wordWrap="char"/>
         <CheckBox id="CheckBox00" taborder="14" text="XHR log" left="26" top="180" width="150" height="20" value="true"/>
+        <Edit id="Edit00" taborder="15" left="117" top="168" width="143" height="52" displaynulltext="globalvalue 설정값"/>
       </Layout>
       <Layout name="screen00" width="1280" height="720" screenid="windows_screen"/>
     </Layouts>
@@ -122,6 +123,7 @@ this.Button02_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
 		"key": "TEST",
         "bjson": window.location.protocol + "//" + window.location.host+"/deploy_guide/windows/_windows_/start.json",
 		"screenid": "windows_sub_screen",
+		"globalvalue": "gvTest:av="+this.Edit00.text,
 		"enginesetupkey": "{DB2D4086-A192-4FCB-A24D-77A7373B02AA}"
 	};
 	this.sendData();
