@@ -43,6 +43,7 @@
     <Service prefixid="FrameBase" type="form" url="./FrameBase/" cachelevel="session" version="0" communicationversion="0"/>
     <Service prefixid="Service" type="file" cachelevel="session" url="./Service/" version="0" communicationversion="0"/>
     <Service prefixid="license" type="file" cachelevel="session" url="./license/" version="0" communicationversion="0"/>
+    <Service prefixid="Sample" type="file" cachelevel="session" url="./Sample/" version="0" communicationversion="0"/>
   </Services>
   <Protocols/>
   <Update>
