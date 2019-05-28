@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XCSS version="1.0"><![CDATA[.Form
+{
+	font : normal 10pt/1.3 "맑은 고딕";
+}
+.TextArea, .TextArea[status=disabled], .TextArea[status=mouseover], .TextArea[status=focused], .TextArea[status=readonly], .TextArea[userstatus=nulltext]
+{
+	-nexa-border : 0px none;
+}]]></XCSS>

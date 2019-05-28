@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ENV version="2.1">
+  <Environment themeid="theme::default">
+    <ScreenDefinition>
+      <Screen id="launcher_screen" type="desktop"/>
+      <Screen id="windows_screen" type="desktop"/>
+      <Screen id="windows_sub_screen" type="desktop" themeid="theme::windows"/>
+    </ScreenDefinition>
+    <Variables/>
+    <Cookies/>
+    <httpheader/>
+  </Environment>
+</ENV>

@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="2.0">
+  <Form id="Form_Work" width="1280" height="720" titletext="Form_Work">
+    <Layouts>
+      <Layout width="1280" height="720" screenid="launcher_screen">
+        <GroupBox id="GroupBox02" taborder="11" text="넥사크로 기본 엔진 개별 설치" left="550" top="16" width="260" height="204"/>
+        <GroupBox id="GroupBox01" taborder="10" text="넥사크로 기본 엔진" left="280" top="16" width="250" height="204"/>
+        <GroupBox id="GroupBox00" taborder="9" text="런처 서비스 설치 및 실행" left="26" top="16" width="234" height="144"/>
+        <Button id="Button00" taborder="0" text="(1) 런처 서비스 설치 파일 배포&#13;&#10;    런처 서비스 실행 후 ID 생성" left="40" top="35" width="210" height="50" onclick="Button00_onclick" textAlign="left" padding="0px 0px 0px 5px"/>
+        <Button id="Button01" taborder="1" text="(2) 넥사크로 엔진 설치 파일 배포&#13;&#10;    넥사크로 엔진 버전 확인" left="40" top="95" width="210" height="50" onclick="Button01_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <Button id="Button02" taborder="2" text="(3) 기본 넥사크로 엔진 &#13;&#10;    + setproperty" left="295" top="35" width="220" height="50" onclick="Button02_onclick" textAlign="left" padding="0px 0px 0px 5px"/>
+        <Button id="Button03" taborder="3" text="(4) 애플리케이션 실행하기" left="295" top="95" width="220" height="50" onclick="Button03_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <Button id="Button04" taborder="4" text="(5) 단축 아이콘&#13;&#10;    만들기" left="295" top="155" width="105" height="50" onclick="Button04_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <Button id="Button05" taborder="5" text="(6) 단축 아이콘 &#13;&#10;    삭제하기" left="410" top="155" width="105" height="50" onclick="Button05_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <Button id="Button06" taborder="6" text="(7) 기본 넥사크로 엔진 개별 사용&#13;&#10;    + setproperty" left="560" top="35" width="240" height="50" onclick="Button06_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <Button id="Button07" taborder="7" text="(8) SetupResource.zip 파일 내려받기" left="560" top="95" width="240" height="50" onclick="Button07_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <Button id="Button08" taborder="8" text="(9) 넥사크로 엔진 설치 파일 내려받기" left="560" top="155" width="240" height="50" onclick="Button08_onclick" padding="0px 0px 0px 5px" textAlign="left"/>
+        <GroupBox id="GroupBox03" taborder="12" text="실행 결과" left="26" top="240" width="784" height="320"/>
+        <TextArea id="TextArea00" taborder="13" left="40" top="260" width="760" height="280" wordWrap="char"/>
+        <CheckBox id="CheckBox00" taborder="14" text="XHR log" left="26" top="180" width="150" height="20" value="true"/>
+      </Layout>
+      <Layout name="screen00" width="1280" height="720" screenid="windows_screen"/>
+    </Layouts>
+    <Script type="xscript5.1"><![CDATA[var objNexacro = {};
+objNexacro.id = '';
+var xhr = null;
+var that = this;
+
+// (1) 런처 서비스 설치 파일 배포하기
+this.Button00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(1) Button Click");
+	objNexacro.platform = 'nexacro';
+	objNexacro.action = 'create';
+	
+	xhr = new XMLHttpRequest();
+	xhr.reqType = 1;	
+	xhr.onreadystatechange = function() 
+	{
+		if(xhr.readyState === 4) {
+			if(xhr.status==0) {
+				that.FileDownTransfer00.download(window.location.protocol + "//" + window.location.host + "/deploy_guide/windows/Service/TPLSvc_Setup.exe");
+			}
+			else
+			{
+				var objResult = JSON.parse(xhr.responseText);
+				if(objResult.result == "success" && objResult.id.length > 0) {
+					objNexacro.id = objResult.id;
+					that.fn_addvalue("launcher service id :"+objNexacro.id);
+				}
+			}
+			checkLaunchVersion();
+		}
+	}
+	
+	var send_url = "http://127.0.0.1:7895/launcher/nexacro/"+new Date().getTime();
+	xhr.open("POST", send_url, true);
+    xhr.send(JSON.stringify(objNexacro));
+};
+
+checkLaunchVersion = function()
+{
+	objNexacro.action = 'check';
+	objNexacro.value = { "getlauncherversion": {} };
+	
+	xhr = new XMLHttpRequest();
+	xhr.reqType = 1;	
+	xhr.onreadystatechange = function() 
+	{
+		if(xhr.readyState === 4) {
+			var objResult = JSON.parse(xhr.responseText);
+			that.fn_addvalue("launcher service version: "+objResult.value["getlauncherversion"].productversion);
+		}
+	}
+	
+	var send_url = "http://127.0.0.1:7895/launcher/nexacro/"+new Date().getTime();
+	xhr.open("POST", send_url, "true");
+    xhr.send(JSON.stringify(objNexacro));	
+}
+
+// (2) 넥사크로 엔진 설치 파일 배포하기
+this.Button01_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(2) Button Click");
+	if(objNexacro.id=='')
+	{
+		that.fn_addvalue('launcher service id was not created');
+		return false;
+	}
+	objNexacro.action = "method";            
+	objNexacro.value = { "getengineversion": { "param": ["{DB2D4086-A192-4FCB-A24D-77A7373B02AA}"], "result": null } };
+	
+	xhr = new XMLHttpRequest();
+	xhr.reqType = 1;	
+	xhr.onreadystatechange = function() 
+	{
+		if(xhr.readyState === 4) {
+			var resultJson = JSON.parse(xhr.responseText);
+			var reg = new RegExp("17.0.0.2000", "i");
+			var rtnEngineVer = resultJson.value["getengineversion"].result;
+			//that.fn_addvalue(xhr.responseText);
+			that.fn_addvalue("nexacro engine version: "+rtnEngineVer);			
+			var strEgine = reg.test(rtnEngineVer);
+			if(!strEgine)
+			{
+				that.FileDownTransfer00.download(window.location.protocol + "//" + window.location.host + "/deploy_guide/windows/Service/nexacro17_SetupRuntime_x64.exe");
+			}
+		}
+	}	
+	
+	var send_url = "http://127.0.0.1:7895/launcher/nexacro/"+new Date().getTime();
+	xhr.open("POST", send_url, "true");
+    xhr.send(JSON.stringify(objNexacro));	
+};
+
+// (3) 기본 넥사크로 엔진 + setproperty
+this.Button02_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(3) Button Click");
+	objNexacro.action = 'setproperty';
+	objNexacro.value = {
+		"key": "TEST",
+        "bjson": window.location.protocol + "//" + window.location.host+"/deploy_guide/windows/_windows_/start.json",
+		"screenid": "windows_sub_screen",
+		"enginesetupkey": "{DB2D4086-A192-4FCB-A24D-77A7373B02AA}"
+	};
+	this.sendData();
+};
+
+// (4) 애플리케이션 실행하기
+this.Button03_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(4) Button Click");
+	objNexacro.action = 'method';
+	objNexacro.value = {
+		"launch": null
+	};
+	this.sendData();
+};
+
+// (5) 단축 아이콘 만들기
+this.Button04_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(5) Button Click");
+	objNexacro.action = 'method';
+	// objNexacro.value = { "isexistshortcut": { "param": ["test", "desktop", true] } };
+	// https://icon-icons.com/ko/download/102320/ICO/512/
+	objNexacro.value = { "makeshortcut": { "param": ["test", window.location.protocol + "//" + window.location.host+"/deploy_guide/windows/_windows_/_resource_/_images_/sample_test.ico", "%USERAPP%", "desktop", true] } };
+	this.sendData();
+};
+
+// (6) 단축 아이콘 삭제하기
+this.Button05_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(6) Button Click");
+	objNexacro.action = 'method';
+	objNexacro.value = { "deleteshortcut": { "param": ["test", "desktop", true] } };
+	this.sendData();
+};
+
+// (7) 기본 넥사크로 엔진 개별 사용 + setproperty
+this.Button06_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(7) Button Click");
+	objNexacro.action = 'setproperty';
+	objNexacro.value = {
+		"key": "TEST",
+        "bjson": window.location.protocol + "//" + window.location.host+"/deploy_guide/windows/_dummy_/start.json",
+		"screenid": "windows_sub_screen",
+		"enginesetupkey": "{DF766894-E778-4A2A-A585-13F9BD8DE053}",
+		"setupresource": 'true'
+	};
+	this.sendData();	
+};
+
+// (8) SetupResource.zip 파일 내려받기
+this.Button07_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(8) Button Click");
+	objNexacro.action = 'method';
+	objNexacro.value = { "downloadresource": { "param": [window.location.protocol + "//" + window.location.host+"/deploy_guide/windows/_dummy_/"] } };
+	this.sendData();	
+};
+
+// (9) 넥사크로 엔진 설치 파일 내려받기
+this.Button08_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.fn_addvalue("(9) Button Click");
+	that.FileDownTransfer00.download(window.location.protocol + "//" + window.location.host + "/deploy_guide/windows/_dummy_/dummy_Setup.exe");
+};
+
+
+this.sendData = function()
+{
+	xhr = new XMLHttpRequest();
+	xhr.reqType = 1;	
+	xhr.onreadystatechange = function() 
+	{
+		if(xhr.readyState === 4) {
+			var resultJson = JSON.parse(xhr.responseText);
+			if(resultJson.action == "event")
+			{
+				if(resultJson.value["error"].code!=0)
+				{
+					that.fn_addvalue("error code: "+resultJson.value["error"].code);
+					that.fn_addvalue("error message: "+resultJson.value["error"].message);
+				}
+			} 
+			else
+			{
+				that.fn_addvalue("result: "+resultJson.result);
+			}
+			if(that.CheckBox00.value)
+				that.fn_addvalue(xhr.responseText);
+			if(resultJson.action != "event")
+				that.get_event();
+		}
+	}	
+	
+	var send_url = "http://127.0.0.1:7895/launcher/nexacro/"+new Date().getTime();
+	xhr.open("POST", send_url, "true");
+    xhr.send(JSON.stringify(objNexacro));
+}
+
+this.fn_addvalue = function(str:String)
+{
+    if(this.TextArea00.value)
+    {
+        this.TextArea00.set_value(this.TextArea00.value+"\n"+str);
+    } else {
+        this.TextArea00.set_value(str);
+    }
+};
+
+this.get_event = function(test_action) 
+{
+	objNexacro.action = 'event';
+	objNexacro.value = { "error": { "code": 0, "message": "" } };
+	this.sendData(true);
+};
+
+]]></Script>
+    <Objects>
+      <FileDownTransfer id="FileDownTransfer00"/>
+    </Objects>
+  </Form>
+</FDL>
