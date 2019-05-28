@@ -99,7 +99,6 @@ this.Button01_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
 			var resultJson = JSON.parse(xhr.responseText);
 			var reg = new RegExp("17.0.0.2000", "i");
 			var rtnEngineVer = resultJson.value["getengineversion"].result;
-			//that.fn_addvalue(xhr.responseText);
 			that.fn_addvalue("nexacro engine version: "+rtnEngineVer);			
 			var strEgine = reg.test(rtnEngineVer);
 			if(!strEgine)
@@ -228,7 +227,7 @@ this.fn_addvalue = function(str:String)
 {
     if(this.TextArea00.value)
     {
-        this.TextArea00.set_value(this.TextArea00.value+"\n"+str);
+        this.TextArea00.insertText("\n"+str);
     } else {
         this.TextArea00.set_value(str);
     }
